@@ -1,0 +1,72 @@
+From 6d12c8291ccb9e327ef1f41ef0ba400020f97f41 Mon Sep 17 00:00:00 2001
+From: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
+Date: Fri, 3 Oct 2025 20:29:51 +0000
+Subject: [PATCH] Migrate assets to Cloudflare R2 CDN
+
+- Add CDN_BASE_URL constant for easy configuration
+- Update FBX animation file paths to load from R2
+- Update GLB map file path to load from R2
+- Update q-skill-sound.wav audio path to load from R2
+
+This resolves the GitHub Pages black screen issue caused by Git LFS
+files not being served as binary data.
+
+Link to Devin run: https://app.devin.ai/sessions/517631f2a73048cdb21868f20c023006
+Requested by: bennycwork@gmail.com
+
+Co-Authored-By: bennycwork@gmail.com <bennycwork@gmail.com>
+---
+ game3d.js  | 12 +++++++-----
+ index.html |  2 +-
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/game3d.js b/game3d.js
+index 3866727..179d778 100644
+--- a/game3d.js
++++ b/game3d.js
+@@ -1,3 +1,5 @@
++const CDN_BASE_URL = 'https://pub-39b7799330674adc85f6866b080077c2.r2.dev';
++
+ class MundoKnifeGame3D {
+     constructor(mode = 'practice', isMultiplayer = false, isHostPlayer = false) {
+         this.gameMode = mode;
+@@ -29,10 +31,10 @@ class MundoKnifeGame3D {
+         const loader = new THREE.FBXLoader();
+         
+         const animationFiles = {
+-            idle: 'Animation_Idle_frame_rate_60.fbx',
+-            run: 'Animation_RunFast_frame_rate_60.fbx',
+-            skill: 'Animation_Skill_03_frame_rate_60.fbx',
+-            death: 'Animation_Dead_frame_rate_60.fbx'
++            idle: `${CDN_BASE_URL}/Animation_Idle_frame_rate_60.fbx`,
++            run: `${CDN_BASE_URL}/Animation_RunFast_frame_rate_60.fbx`,
++            skill: `${CDN_BASE_URL}/Animation_Skill_03_frame_rate_60.fbx`,
++            death: `${CDN_BASE_URL}/Animation_Dead_frame_rate_60.fbx`
+         };
+         
+         this.characterModel = null;
+@@ -107,7 +109,7 @@ class MundoKnifeGame3D {
+     setupTerrain() {
+         const loader = new THREE.GLTFLoader();
+         
+-        loader.load('new_map.glb', (gltf) => {
++        loader.load(`${CDN_BASE_URL}/new_map.glb`, (gltf) => {
+             const mapModel = gltf.scene;
+             
+             const box = new THREE.Box3().setFromObject(mapModel);
+diff --git a/index.html b/index.html
+index a355969..d4a9167 100644
+--- a/index.html
++++ b/index.html
+@@ -497,7 +497,7 @@
+             <source src="button-click.mp3" type="audio/mpeg">
+         </audio>
+         <audio id="qSkillSound" preload="auto">
+-            <source src="q-skill-sound.wav" type="audio/wav">
++            <source src="https://pub-39b7799330674adc85f6866b080077c2.r2.dev/q-skill-sound.wav" type="audio/wav">
+         </audio>
+         <div class="main-menu-overlay"></div>
+         <h1 class="game-title">Mundo-cleaver</h1>
+-- 
+2.34.1
+
